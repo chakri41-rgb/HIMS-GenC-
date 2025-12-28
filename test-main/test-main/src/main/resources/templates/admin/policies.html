@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/logo.jpeg" type="image/jpeg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Policies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="p-8">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Policies (Admin)</h1>
+      <a href="/admin/policies/new" class="bg-emerald-600 text-white px-4 py-2 rounded">Create Policy</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(policies)}">No policies found.</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div th:each="policy : ${policies}" class="bg-white border rounded-lg p-4">
+        <div class="flex justify-between">
+          <div>
+            <h3 class="font-semibold" th:text="${policy.policyNumber}">POL-001</h3>
+            <p class="text-sm text-slate-500" th:text="${policy.user != null ? policy.user.username : 'Unassigned'}">Holder</p>
+          </div>
+          <div>
+            <a th:href="@{'/admin/policies/' + ${policy.policyId} + '/edit'}" class="text-xs text-emerald-600">Edit</a>
+          </div>
+        </div>
+        <div class="mt-2 text-sm">
+          <div>Coverage: <span th:text="${policy.coverageAmount}"></span></div>
+          <div>Premium: <span th:text="${policy.premiumAmount}"></span></div>
+          <div>Valid: <span th:text="${policy.startDate}"></span> - <span th:text="${policy.endDate}"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

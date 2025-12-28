@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />  <link rel="icon" href="/assets/logo.jpeg" type="image/jpeg">  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Policies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="p-8">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">My Policies</h1>
+
+    <div th:if="${#lists.isEmpty(policies)}">You have no policies assigned.</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div th:each="policy : ${policies}" class="bg-white border rounded-lg p-4">
+        <h3 class="font-semibold" th:text="${policy.policyNumber}">POL-000</h3>
+        <p class="text-sm text-slate-500" th:text="${policy.coverageType}">Coverage</p>
+        <div class="mt-2 text-sm">
+          <div>Coverage: <span th:text="${policy.coverageAmount}"></span></div>
+          <div>Premium: <span th:text="${policy.premiumAmount}"></span></div>
+          <div>Valid: <span th:text="${policy.startDate}"></span> - <span th:text="${policy.endDate}"></span></div>
+        </div>
+        <div class="mt-3">
+          <a th:href="@{'/user/dashboard.html'}" class="text-xs text-emerald-600">View Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

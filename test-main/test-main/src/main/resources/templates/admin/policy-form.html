@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/logo.jpeg" type="image/jpeg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create / Edit Policy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-8">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg">
+    <h2 class="text-xl font-bold mb-4">Policy</h2>
+
+    <form th:action="@{/admin/policies/save}" th:object="${policy}" method="post" class="space-y-4">
+      <input type="hidden" th:field="*{policyId}" />
+
+      <div>
+        <label class="block text-sm">Policy Number</label>
+        <input th:field="*{policyNumber}" class="border rounded px-3 py-2 w-full" required />
+      </div>
+
+      <div>
+        <label class="block text-sm">Policy Holder</label>
+        <select th:field="*{user.userId}" class="border rounded px-3 py-2 w-full">
+          <option th:each="u : ${users}" th:value="${u.userId}" th:text="${u.username}"></option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm">Coverage Amount</label>
+          <input th:field="*{coverageAmount}" class="border rounded px-3 py-2 w-full" />
+        </div>
+        <div>
+          <label class="block text-sm">Premium Amount</label>
+          <input th:field="*{premiumAmount}" class="border rounded px-3 py-2 w-full" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm">Start Date</label>
+          <input type="date" th:field="*{startDate}" class="border rounded px-3 py-2 w-full" />
+        </div>
+        <div>
+          <label class="block text-sm">End Date</label>
+          <input type="date" th:field="*{endDate}" class="border rounded px-3 py-2 w-full" />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm">Status</label>
+        <select th:field="*{policyStatus}" class="border rounded px-3 py-2 w-full">
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="INACTIVE">INACTIVE</option>
+          <option value="RENEWED">RENEWED</option>
+          <option value="EXPIRED">EXPIRED</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded">Save</button>
+        <a href="/admin/policies" class="px-4 py-2 border rounded">Cancel</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

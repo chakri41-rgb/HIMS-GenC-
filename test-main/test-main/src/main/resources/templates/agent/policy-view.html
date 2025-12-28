@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/logo.jpeg" type="image/jpeg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Policy Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="p-8">
+  <div class="max-w-3xl mx-auto bg-white rounded-xl p-6">
+    <h2 class="text-xl font-bold mb-4" th:text="${policy.policyNumber}">POL-000</h2>
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div><p class="text-slate-400">Coverage Type</p><p class="font-semibold" th:text="${policy.coverageType}">Type</p></div>
+      <div><p class="text-slate-400">Policy Holder</p><p class="font-semibold" th:text="${policy.user != null ? policy.user.username : 'N/A'}">Holder</p></div>
+      <div><p class="text-slate-400">Coverage Amount</p><p class="font-bold" th:text="${policy.coverageAmount}">$0</p></div>
+      <div><p class="text-slate-400">Monthly Premium</p><p class="font-bold" th:text="${policy.premiumAmount}">$0</p></div>
+      <div><p class="text-slate-400">Start Date</p><p th:text="${policy.startDate}">2024-01-01</p></div>
+      <div><p class="text-slate-400">End Date</p><p th:text="${policy.endDate}">2024-12-31</p></div>
+    </div>
+
+    <div class="mt-4 pt-4 border-t">
+      <p class="text-slate-400">Renewal Status</p>
+      <p class="text-amber-600 font-semibold" th:text="${policy.policyStatus}">Due in 30 days</p>
+    </div>
+
+    <div class="mt-4 pt-4 border-t">
+      <p class="font-semibold mb-3">Customer Assistance Actions</p>
+      <div class="flex gap-2 mb-3">
+        <button class="flex-1 border rounded-xl py-2">Explain Coverage</button>
+        <button class="flex-1 border rounded-xl py-2">Contact Customer</button>
+      </div>
+      <form th:if="${policy.policyStatus.name()=='EXPIRED' or policy.renewals.?[renewalDueDate != null && renewalDueDate.isBefore(T(java.time.LocalDate).now())].size() > 0}" method="post" th:action="@{'/agent/policies/' + ${policy.policyId} + '/assist-renewal'}">
+        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-semibold">Assist with Renewal</button>
+      </form>
+      <button th:unless="${policy.policyStatus.name()=='EXPIRED' or policy.renewals.?[renewalDueDate != null && renewalDueDate.isBefore(T(java.time.LocalDate).now())].size() > 0}" class="w-full bg-gray-100 py-3 rounded-xl font-semibold" disabled>Assist with Renewal</button>
+    </div>
+
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

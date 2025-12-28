@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" /><link rel="icon" href="/assets/logo.jpeg" type="image/jpeg"><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Policy Assistance – HIMS</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f8fafc;
+}
+
+.card-hover {
+  transition: all .25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 45px rgba(0,0,0,.15);
+}
+
+.modal-backdrop {
+  background: rgba(0,0,0,.45);
+}
+</style>
+</head>
+
+<body class="text-slate-900">
+
+<main class="ml-64 p-8">
+
+<h1 class="text-3xl font-bold mb-1">Policy Assistance</h1>
+<p class="text-slate-500 mb-6">View and assist customers with their policies</p>
+
+<!-- INFO BANNER -->
+<div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex gap-3">
+  <i data-lucide="info" class="text-blue-600"></i>
+  <div>
+    <p class="font-semibold text-blue-800">Agent Role: View & Assist Only</p>
+    <p class="text-sm text-blue-600">
+      You can view policy details and assist customers with renewals, coverage explanations,
+      and premium queries. Policy creation and modifications are handled by administrators.
+    </p>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="grid grid-cols-3 gap-4 mb-6 text-center">
+  <div class="bg-white border rounded-xl p-4 card-hover">
+    <p class="text-2xl font-bold text-emerald-600" th:text="${#lists.size(policies.?[policyStatus.name() == 'ACTIVE'])}">0</p>
+    <p class="text-sm text-slate-500">Active</p>
+  </div>
+  <div class="bg-white border rounded-xl p-4 card-hover">
+    <p class="text-2xl font-bold text-amber-600" th:text="${#lists.size(policies.?[policyStatus.name() == 'INACTIVE'])}">0</p>
+    <p class="text-sm text-slate-500">Inactive</p>
+  </div>
+  <div class="bg-white border rounded-xl p-4 card-hover">
+    <p class="text-2xl font-bold text-red-600" th:text="${#lists.size(policies.?[policyStatus.name() == 'EXPIRED'])}">0</p>
+    <p class="text-sm text-slate-500">Expired</p>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<form method="get" action="/agent/policies" class="flex gap-4 mb-6">
+  <input name="q" class="border rounded-lg px-4 py-2 w-96" placeholder="Search by Policy ID, Name, or Customer..." value="" />
+  <select id="statusFilter" name="status" class="border rounded-lg px-4 py-2" onchange="this.form.submit()">
+    <option value="all" th:selected="${selectedStatus == 'all'}">All Policies</option>
+    <option value="active" th:selected="${selectedStatus == 'active'}">Active</option>
+    <option value="inactive" th:selected="${selectedStatus == 'inactive'}">Inactive</option>
+    <option value="expired" th:selected="${selectedStatus == 'expired'}">Expired</option>
+  </select>
+</form>
+
+<!-- ================= POLICIES GRID ================= -->
+<div id="policiesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+  <div th:each="policy : ${policies}" class="bg-white rounded-3xl overflow-hidden border shadow-soft card-hover">
+    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 text-white">
+      <div class="flex justify-between mb-2">
+        <i data-lucide="shield"></i>
+        <span class="bg-white/25 px-3 py-1 rounded-full text-xs capitalize" th:text="${policy.policyStatus.name().toLowerCase()}"></span>
+      </div>
+      <h3 class="font-bold text-lg" th:text="${policy.policyNumber}">POL-000</h3>
+      <p class="text-sm opacity-90" th:text="${policy.user != null ? policy.user.username : 'Unknown'}">Policy Holder</p>
+    </div>
+
+    <div class="p-6 space-y-2 text-sm">
+      <div class="flex justify-between"><span>Policy Number</span><span class="font-mono" th:text="${policy.policyNumber}">POL-000</span></div>
+      <div class="flex justify-between"><span>Coverage</span><span class="font-bold" th:text="${policy.coverageAmount}">$0</span></div>
+      <div class="flex justify-between"><span>Premium</span><span class="font-bold" th:text="${policy.premiumAmount}">$0/mo</span></div>
+      <div class="flex justify-between"><span>Valid Until</span><span th:text="${policy.endDate}">2025-01-01</span></div>
+
+      <div class="pt-2 border-t font-medium" th:classappend="${policy.policyStatus.name()=='ACTIVE'} ? ' text-emerald-600' : (policy.policyStatus.name()=='INACTIVE' ? ' text-amber-600' : ' text-red-600')" th:text="${policy.policyStatus.name()=='EXPIRED' ? 'Expired - Renewal required' : (policy.policyStatus.name()=='INACTIVE' ? 'Pending activation' : (policy.policyStatus.name()=='RENEWED' ? 'Active' : 'Active'))}">Status</div>
+
+      <div class="flex gap-2 pt-3">
+        <a th:href="@{'/agent/policies/' + ${policy.policyId}}" class="flex-1 border rounded-xl py-2 flex items-center justify-center gap-2">
+          <i data-lucide="eye"></i> View
+        </a>
+        <button class="flex-1 border rounded-xl py-2 flex items-center justify-center gap-2">
+          <i data-lucide="user"></i> Contact
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>
